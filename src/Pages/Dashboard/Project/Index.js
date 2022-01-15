@@ -6,9 +6,11 @@ import Pagination from "../../../Components/Utils/Pagination";
 import Spinner from "../../../Components/Utils/Spinner";
 import { API_HOST } from "../../../config/constant";
 import parse from 'html-react-parser';
+import { connect } from 'react-redux';
 
-export default function Index() {
+function Index(props) {
 
+    const {user} = props;
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -80,7 +82,9 @@ export default function Index() {
                   <i className="uil uil-search"></i>
                   </button>
                 </div>
-                  <Link to="/projects/create" className="ml-5 inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold capitalize text-white hover:bg-indigo-700 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-200 transition">Create Project</Link>
+                  {
+                    user.role == "manager" && <Link to="/projects/create" className="ml-5 inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold capitalize text-white hover:bg-indigo-700 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-200 transition">Create Project</Link>
+                  }
                 </div>
             </div>
             <hr />
@@ -151,7 +155,10 @@ export default function Index() {
                               >
                                 View
                               </Link>
-                              <Link
+                              {
+                                user.role == "manager" && 
+                                <Fragment>
+                                  <Link
                                 to={`/projects/edit/${project.id}`}
                                 className="text-indigo-600 hover:text-indigo-900 ml-5"
                               >
@@ -164,6 +171,8 @@ export default function Index() {
                               >
                                 Delete
                               </Link>
+                                </Fragment>
+                              }
                             </td>
                           </tr>
                         )) 
@@ -176,7 +185,7 @@ export default function Index() {
                         }
                       </tbody>
                     </table>
-                    <Pagination></Pagination>
+                    {/* <Pagination></Pagination> */}
                   </div>
                 </div>
               </div>
@@ -187,3 +196,10 @@ export default function Index() {
     </Fragment>
   );
 }
+
+
+const mapStateToProps = (state) => ({
+  user: state.user
+});
+
+export default connect(mapStateToProps)(Index);

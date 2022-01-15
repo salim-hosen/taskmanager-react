@@ -24,6 +24,12 @@ import EditTask from './Pages/Dashboard/Task/Edit'
 import Worksheet from './Pages/Dashboard/Worksheet/Index'
 import ViewProject from "./Pages/Dashboard/Project/View";
 import Spinner from "./Components/Utils/Spinner";
+import EditWorksheet from "./Pages/Dashboard/Worksheet/Edit";
+import CreateWorksheet from "./Pages/Dashboard/Worksheet/Create";
+import Settings from "./Pages/Dashboard/Settings";
+import User from "./Pages/Dashboard/Users/Index";
+import CreateUser from "./Pages/Dashboard/Users/Create";
+import EditUser from "./Pages/Dashboard/Users/Edit";
 
 
 function App() {
@@ -74,6 +80,12 @@ function App() {
                   <Route exact path="/tasks/create/:id" element={<CreateTask />} />
                   <Route exact path="/tasks/edit/:id" element={<EditTask />} />
                   <Route exact path="/worksheets" element={<Worksheet />} />
+                  <Route exact path="/worksheets/create" element={<CreateWorksheet />} />
+                  <Route exact path="/worksheets/edit/:id" element={<EditWorksheet />} />
+                  <Route exact path="/settings" element={<Settings />} />
+                  <Route exact path="/users" element={<User />} />
+                  <Route exact path="/users/create" element={<CreateUser />} />
+                  <Route exact path="/users/edit/:id" element={<EditUser />} />
                 </Route>
 
                 <Route path="*" element={<NotFound/>} />

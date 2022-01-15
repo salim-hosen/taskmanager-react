@@ -29,11 +29,10 @@ export const logoutUser = (navigate) => (dispatch) => {
 export const getUser = () => (dispatch) => {
     
     const token = localStorage.token;
-    if(!token) return false;
 
     return axios.get(API_HOST+"/me", { headers: {"Authorization" : `${token}`} })
         .then(res => {
-            dispatch({type: SET_AUTHENTICATED, payload: res.data.data});
+            dispatch({type: SET_AUTHENTICATED, payload: res.data});
             return true;
         })
         .catch( err => {

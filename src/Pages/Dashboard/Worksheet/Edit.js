@@ -9,93 +9,73 @@ import { validate } from "../../../Utils/Validator";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { CKEditor } from 'ckeditor4-react';
+import TextArea from "../../../Components/Form/TextArea";
 
-export default function EditProduct() {
+export default function EditWorksheet() {
 
     const routeParams = useParams();
-  const [form, setForm] = useState({
-    name: "",
-    price: "",
-    qty: "",
-    description: ''
-  });
 
-  const [submitting, setSubmitting] = useState(false);
-
-  const [errors, setErrors] = useState({});
-
-  const [imageURL, setImageURL] = useState("");
-
-
-  function handleImage(e){
-
-    const file = e.target.files[0];
-    setForm({...form, image: file});
-    setImageURL(URL.createObjectURL(file));
-
-  }
-
-   function loadProduct(){
-        axios.get(API_HOST+`/products/${routeParams.slug}`)
-            .then(res => {
-                const product = res.data.data;
-                setForm({...form, name: product.name, id: product.id, price: product.price, qty: product.qty, description: product.description});
-                setImageURL(product.image);
-            })
-            .catch(err => {
-                console.log(err);
-            });
-    }
-
-  useEffect(() => {
-     loadProduct();
-  }, [])
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    // Validate Form
-    const {isValid, errors} = validate(form, {
-        name: ['required'],
-        price: ['required'],
-        qty: ['required'],
-        image: ['required'],
-        description: ["required"]
-    });
-
-    setSubmitting(true);
+    const [form, setForm] = useState({
+        hours: "",
+        note: "",
+      });
     
-    if(isValid){
+      const [loading, setLoading] = useState(false);
+      const [submitting, setSubmitting] = useState(false);
+      const [errors, setErrors] = useState({});
 
-        const formData = new FormData();
-        formData.append("_method", "PUT");
-        formData.append("id", form.id);
-        formData.append("name", form.name);
-        formData.append("price", form.price);
-        formData.append("qty", form.qty);
-        formData.append("image", form.image);
-        formData.append("description", form.description);
+      function loadWorksheet(){
+        setLoading(true);
+          axios.get(API_HOST+`/worksheets/${routeParams.id}`, {headers: {Authorization: `${localStorage.getItem("token")}`}})
+              .then(res => {
+                  setLoading(false);
+                  const worksheet = res.data.data;
+                  setForm({...form, hours: worksheet.time, note: worksheet.note});
+              })
+              .catch(err => {
+                setLoading(false);
+                  console.log(err);
+              });
+      }
+    
+      useEffect(() => {
+        loadWorksheet();
+      }, [])
 
-        axios.post(`${API_HOST}/products/${form.id}`, formData, { headers: {"Authorization" : `${localStorage.getItem('token')}`} })
-            .then(res => {
-                toast.success("Product Updated Successfully!");
-                setSubmitting(false);
-            })
-            .catch(err => {
-                if(err.response && err.response.status === 422){
-                  
-                    setErrors(err.response.data.errors);
 
-                }
-                setSubmitting(false);
-            });
-
-    }else{
-        setErrors(errors);
-        setSubmitting(false);
-    }
-
-  }
+      function handleSubmit(e) {
+        e.preventDefault();
+    
+        // Validate Form
+        const {isValid, errors} = validate(form, {
+            hours: ['required'],
+        });
+    
+        setSubmitting(true);
+        
+        if(isValid){
+    
+            axios.put(`${API_HOST}/worksheets/${routeParams.id}`, form, {headers: {Authorization: `${localStorage.getItem("token")}`}})
+                .then(res => {
+                    setErrors({});
+                    toast.success("Updated Successfully!");
+                    setSubmitting(false);
+                })
+                .catch(err => {
+                    if(err.response && err.response.status === 422){
+                      
+                        setErrors(err.response.data.errors);
+    
+                    }
+                    setSubmitting(false);
+                });
+    
+        }else{
+            setErrors(errors);
+            setSubmitting(false);
+        }
+    
+      }
 
   return (
     <Fragment>
@@ -106,97 +86,39 @@ export default function EditProduct() {
           <div className="w-full h-full rounded border-gray-300 p-5">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-600 pb-2">
-                Edit Product
+                Edit Worksheet
               </h2>
             </div>
             <hr />
             <div className="mt-5">
               <form onSubmit={handleSubmit}>
-                
-                <div className="grid md:grid-cols-2">
-
-                    <div>
-                    <InputField
-                  id="name"
-                  label="Product Name"
-                  type="text"
-                  name="name"
-                  error={errors.name}
-                  initialValue={form.name}
-                  onInput={(value) => setForm({ ...form, name: value })}
-                />
-
                 <InputField
-                  id="price"
-                  label="Price"
-                  type="text"
-                  name="price"
-                  error={errors.price}
-                  initialValue={form.price}
-                  onInput={(value) => setForm({ ...form, price: value })}
-                />
-
-                <InputField
-                  id="qty"
-                  label="Quantity"
+                  id="hours"
+                  label="Add Hours"
                   type="number"
-                  name="qty"
-                  error={errors.qty}
-                  initialValue={form.qty}
-                  onInput={(value) => setForm({ ...form, qty: value })}
+                  name="hours"
+                  initialValue={form.hours}
+                  error={errors.hours}
+                  onInput={(value) => setForm({ ...form, hours: value })}
                 />
-                    </div>
 
-                    <div className="w-full h-full flex justify-center items-center">
-                        
-                        <div>
-                        <label htmlFor="image">
-                            {
-                                imageURL ? 
-                                <div className="relative">
-                                    <img src={imageURL} alt="image" style={{height: 120, width: 120}}/>
-                                    <i className="uil uil-image-upload absolute 4xl"></i>
-                                </div>
-                                :
-                                <div className="text-center border border-dashed border-gray-400 rounded-md">
-                                    <i className="uil uil-image-upload text-5xl text-gray-500 p-10 block"></i>
-                                </div>
-                            }
-                            <input type="file" id="image" onChange={handleImage} name="image" hidden/>
-                            
-                        </label>
-                        <div>
-                        {
-                            errors.image && <span className="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                                {errors.image}
-                            </span>
-                        }
-                        </div>
-                        </div>
-                        
-                    </div>
-                </div>
-
-                {
-                    form.description && 
-                        <CKEditor
-                            initData={form.description}
-                            onChange={(e) => setForm({...form, description: e.editor.getData()})}
-                        />
-                }
-                {
-                    errors.description && <span className="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                        {errors.description}
-                    </span>
-                }
+                <TextArea
+                  id="note"
+                  label="Note"
+                  name="note"
+                  initialValue={form.note}
+                  error={errors.note}
+                  onInput={(value) => setForm({ ...form, note: value })}
+                />
 
                 <div className="mt-6 text-center">
-                  <FormButton
-                    fullWidth={false}
-                    buttonText="Update Product"
-                    loading={submitting}
-                  />
+                    <FormButton
+                      fullWidth={false}
+                      buttonText="Update"
+                      loading={submitting}
+                    />
                 </div>
+
               </form>
             </div>
           </div>

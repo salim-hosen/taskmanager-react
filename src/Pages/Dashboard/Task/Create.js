@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CKEditor } from 'ckeditor4-react';
 import SelectField from "../../../Components/Form/SelectField";
 import { useParams } from "react-router-dom";
+import TextArea from "../../../Components/Form/TextArea";
 
 
 export default function CreateTask() {
@@ -30,13 +31,12 @@ export default function CreateTask() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    setForm({...form, description: description});
     // Validate Form
     const {isValid, errors} = validate(form, {
         start_date: ['required'],
         close_date: ['required'],
+        description: ["required"]
     });
-    if(!description) errors['description'] = "Should not be Empty";
 
     setSubmitting(true);
     
@@ -73,7 +73,7 @@ export default function CreateTask() {
           <div className="w-full h-full rounded border-gray-300 p-5">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-600 pb-2">
-                Create Project
+                Create Task
               </h2>
             </div>
             <hr />
@@ -99,24 +99,13 @@ export default function CreateTask() {
                 />
 
                 
-                <div className="mb-4">
-                  <label className="block mb-1" htmlFor="description">
-                      Description
-                  </label>
-                  <CKEditor
-                      className="mb-4"
-                      initData={form.description}
-                      onChange={(e) => {
-                          const data = e.editor.getData();
-                          setDescription(data);
-                      }}
-                  />
-                  {
-                      errors.description && <span className="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                          {errors.description}
-                      </span>
-                  }
-                </div>
+                <TextArea
+                  id="description"
+                  label="Description"
+                  name="description"
+                  error={errors.description}
+                  onInput={(value) => setForm({ ...form, description: value })}
+                />
 
                 <div className="mt-6 text-center">
                   <FormButton

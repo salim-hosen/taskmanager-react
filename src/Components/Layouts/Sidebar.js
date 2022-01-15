@@ -6,6 +6,7 @@ import { logoutUser } from '../../redux/actions/userActions';
 function BuyerSidebar(props) {
 
     const navigate = useNavigate();
+    const {user} = props;
 
     return (
         <aside className="md:h-screen w-full sm:w-1/3 md:w-1/5  bg-gray-800">
@@ -37,7 +38,7 @@ function BuyerSidebar(props) {
                         className="block w-full py-2 font-medium"
                       >
                         <div className="flex items-center">
-                        <i className="uil uil-shopping-basket"></i>
+                        <i className="uil uil-constructor"></i>
                           <span className="text-sm ml-2">Projects</span>
                         </div>
                       </Link>
@@ -49,7 +50,7 @@ function BuyerSidebar(props) {
                         className="block w-full py-2 font-medium"
                       >
                         <div className="flex items-center">
-                        <i className="uil uil-shopping-basket"></i>
+                        <i className="uil uil-clipboard"></i>
                           <span className="text-sm ml-2">Tasks</span>
                         </div>
                       </Link>
@@ -61,11 +62,26 @@ function BuyerSidebar(props) {
                         className="block w-full py-2 font-medium"
                       >
                         <div className="flex items-center">
-                        <i className="uil uil-shopping-basket"></i>
+                        <i className="uil uil-file-graph"></i>
                           <span className="text-sm ml-2">Worksheets</span>
                         </div>
                       </Link>
                     </li>
+
+                    {
+                      user.role == "admin" && 
+                      <li className="flex w-full justify-between text-gray-300 hover:text-gray-200 cursor-pointer items-center">
+                      <Link
+                        to="/users"
+                        className="block w-full py-2 font-medium"
+                      >
+                        <div className="flex items-center">
+                        <i className="uil uil-users-alt"></i>
+                          <span className="text-sm ml-2">Users</span>
+                        </div>
+                      </Link>
+                    </li>
+                    }
 
                     <li className="flex w-full justify-between text-gray-300 hover:text-gray-200 cursor-pointer items-center">
                       <Link

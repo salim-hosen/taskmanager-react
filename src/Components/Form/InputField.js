@@ -13,7 +13,7 @@ export default function InputField(props) {
             type={type}
             name={name}
             readOnly={readOnly ?? false}
-            value={initialValue}
+            defaultValue={initialValue}
             className={`py-2 px-3 border border-gray-300 focus:border-indigo-300 focus:outline-none focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${error && 'border-red-500'}`}
             onChange={(e) => onInput(e.target.value)}
             />

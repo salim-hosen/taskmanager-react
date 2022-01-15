@@ -9,7 +9,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { CKEditor } from 'ckeditor4-react';
 
-export default function CreateProduct() {
+export default function CreateWorksheet() {
   
   const [form, setForm] = useState({
     name: "",

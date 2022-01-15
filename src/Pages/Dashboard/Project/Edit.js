@@ -10,6 +10,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { CKEditor } from 'ckeditor4-react';
 import SelectField from "../../../Components/Form/SelectField";
+import Spinner from "../../../Components/Utils/Spinner";
 
 export default function EditProject() {
 
@@ -22,18 +23,22 @@ export default function EditProject() {
     });
 
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [description, setDescription] = useState("");
 
 
    function loadProject(){
+    setLoading(true);
         axios.get(API_HOST+`/projects/${routeParams.id}`, {headers: {Authorization: `${localStorage.getItem("token")}`}})
             .then(res => {
                 const project = res.data.data;
                 setForm({...project});
+                setLoading(false);
             })
             .catch(err => {
                 console.log(err);
+                setLoading(false);
             });
     }
 
@@ -92,7 +97,13 @@ export default function EditProject() {
               </h2>
             </div>
             <hr />
-            <div className="mt-5">
+            {
+              loading ? 
+<div className="flex justify-center my-5">
+    <Spinner></Spinner>
+</div>
+              :
+              <div className="mt-5">
               <form onSubmit={handleSubmit}>
                 
               <InputField
@@ -151,6 +162,7 @@ export default function EditProject() {
                 </div>
               </form>
             </div>
+            }
           </div>
         </main>
       </div>

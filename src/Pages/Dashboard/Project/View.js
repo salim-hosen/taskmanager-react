@@ -65,6 +65,7 @@ export default function ViewProject() {
                         <li onClick={()=>setTab("dashboard")} className={`${tab === "dashboard" && 'bg-indigo-900  text-white'} py-2 px-3 rounded-md cursor-pointer`}>Dashboard</li>
                         <li onClick={()=>setTab("task")} className={`${tab === "task" && 'bg-indigo-900  text-white'} py-2 px-3 rounded-md ml-3 cursor-pointer`}>Tasks</li>
                     </ul>
+                    <hr/>
                     <div>
                         {
                             tab === "dashboard" ?

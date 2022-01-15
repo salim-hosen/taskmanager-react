@@ -4,11 +4,12 @@ import { Link, useParams } from "react-router-dom";
 import Sidebar from "../../../Components/Layouts/Sidebar";
 import Spinner from "../../../Components/Utils/Spinner";
 import { API_HOST } from "../../../config/constant";
-import parse from 'html-react-parser';
 import moment from "moment";
+import {connect} from 'react-redux'
 
-export default function ProjectTasks() {
+function ProjectTasks(props) {
 
+  const {user} = props;
     const routeParams = useParams();
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -41,19 +42,19 @@ export default function ProjectTasks() {
         loadTasks();
     }, [])
 
-  function deleteTask(id){
+    function deleteTask(id){
 
-    if(!window.confirm("Are you Sure to Delete?")) return;
+      if(!window.confirm("Are you Sure to Delete?")) return;
 
-    axios.post(`${API_HOST}/tasks/${id}`, {_method: "DELETE"}, { headers: {"Authorization" : `${localStorage.getItem('token')}`} })
-      .then(res => {
-          loadTasks();
-      })
-      .catch(err => {
-          console.log(err);
-      });
+      axios.post(`${API_HOST}/tasks/${id}`, {_method: "DELETE"}, { headers: {"Authorization" : `${localStorage.getItem('token')}`} })
+        .then(res => {
+            loadTasks();
+        })
+        .catch(err => {
+            console.log(err);
+        });
 
-  }
+    }
     
   return (
     <div className="flex flex-col mt-5">
@@ -117,7 +118,7 @@ export default function ProjectTasks() {
                             
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">
-                                {parse(task.description)}
+                                {task.description}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
@@ -145,19 +146,24 @@ export default function ProjectTasks() {
                             </td>
 
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <Link
-                                to={`/tasks/edit/${task.id}`}
-                                className="text-indigo-600 hover:text-indigo-900"
-                              >
-                                Edit
-                              </Link>
-                              <Link
-                                to="#"
-                                onClick={() => deleteTask(task.id)}
-                                className="text-red-600 hover:text-red-900 ml-5"
-                              >
-                                Delete
-                              </Link>
+                              {
+                                user.id == task.user_id &&
+                                  <Fragment>
+                                      <Link
+                                    to={`/tasks/edit/${task.id}`}
+                                    className="text-indigo-600 hover:text-indigo-900"
+                                  >
+                                    Edit
+                                  </Link>
+                                  <Link
+                                    to="#"
+                                    onClick={() => deleteTask(task.id)}
+                                    className="text-red-600 hover:text-red-900 ml-5"
+                                  >
+                                    Delete
+                                  </Link>
+                                </Fragment>
+                              }
                             </td>
                           </tr>
                         )) 
@@ -176,3 +182,11 @@ export default function ProjectTasks() {
             </div>
   );
 }
+
+
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
+
+
+export default connect(mapStateToProps)(ProjectTasks)

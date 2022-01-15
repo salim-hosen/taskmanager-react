@@ -79,6 +79,7 @@ export default function ForgotPassword(props) {
 
               <div className="mt-6">
                 <FormButton
+                  className="w-full"
                   buttonText="Send Reset Mail"
                   loading={submitting}
                 />
